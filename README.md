@@ -6,7 +6,7 @@ This is a Python implementation of Multiple Imputations by Chained Equations (MI
 
 ## What are Missing values or NaN's?
 
-- [Here is a notebook covering the basics of NaN imputations.](https://github.com/jomanovic/To-Mice-or-not-to-Mice/blob/master/Microsoft-Malware-prediction-NaN.ipynb)
+- [](http://www.stat.columbia.edu/~gelman/arm/missing.pdf)
 
 ## What is Multiple Imputations by Chained Equations?: 
 
