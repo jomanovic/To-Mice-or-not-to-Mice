@@ -1,7 +1,8 @@
 # To-Mice-or-not-to-Mice
 ![](https://github.com/jomanovic/To-Mice-or-not-to-Mice/blob/master/images/MOUSE.png)
 
-This is a Python implementation of Multiple Imputations by Chained Equations (MICE): https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3074241/
+This is a Python implementation of Multiple Imputations by Chained Equations (MICE): 
+- https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3074241/
 
 ## What are Missing values or NaN's?
 
@@ -26,7 +27,7 @@ This is a Python implementation of Multiple Imputations by Chained Equations (MI
           self.copy = copy
           self.imp = SimpleImputer(strategy=self.strategy, copy=self.copy)
     
-      def fit_transform(self, X, method = 'Linear', corr_thrs = 0, iter = 5, verbose = True):
+      def fit_transform(self, X, method = 'Linear', iter = 5, verbose = True):
           method = ['Linear', 'Ridge']
           
     m = MiceImputer()
