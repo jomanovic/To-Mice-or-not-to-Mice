@@ -21,18 +21,16 @@ class MiceImputer(object):
 
     def fit_transform(self, X, method = 'Linear', corr_thrs = 0, iter = 5, verbose = True):
         
+        # Why use Pandas?
         # http://gouthamanbalaraman.com/blog/numpy-vs-pandas-comparison.html
         # Pandas < Numpy if X.shape[0] < 50K
-        # Pandas > Numpy if X.shape[0] > 500K 
-        
+        # Pandas > Numpy if X.shape[0] > 500K
         
         # Data necessary for masking missing-values after imputation
-        
         null_cols = X.columns[X.isna().any()].tolist()
         null_X = X.isna()[null_cols]
-        
-        
-        # Initialize missing_values
+      
+        ### Initialize missing_values
         
         if self.seed_values:
             
@@ -44,9 +42,8 @@ class MiceImputer(object):
             new_X.index = X.index
             
         else:
-            
+   
             # Initialize a copy based on value of self.copy
-            
             if self.copy:
                 new_X = X.copy()
             else:
@@ -56,7 +53,7 @@ class MiceImputer(object):
             
             if verbose:
                 print('Initilization of missing-values using regression on non-null columns')
-                
+               
             for column in null_cols:
                 
                 null_rows = null_X[column]
@@ -76,8 +73,8 @@ class MiceImputer(object):
                     new_X.loc[null_rows,column] = pd.Series(m.predict(test_x))
                     not_null_cols.append(column)
                 
-        
-        # Create a dictionary: column -> list of columns in df with correlation > threshold
+       
+        ### Create a dictionary { cols : [ other_cols if corr(cols, other_cols) < threshold ] }  (see "multicollinearity")
         
         corr_dict = {}
         
@@ -90,7 +87,7 @@ class MiceImputer(object):
                     if corr_thrs < abs(new_X[col].corr(new_X[tmp])) and col != tmp:   
                         corr_dict[col].append(tmp)
         
-        # Begin iterations of MICE
+        ### Begin iterations of MICE
         
         model_score = {}
         
@@ -110,8 +107,7 @@ class MiceImputer(object):
                 
                 test_x = new_X.drop(column, axis = 1)
                 
-                if corr_thrs and corr_dict.get(column, []):
-                    
+                if corr_thrs and corr_dict.get(column, []):  
                     corr_cols = corr_dict[column]
                     train_x = train_x[corr_cols]
                     test_x = test_x[corr_cols]
@@ -122,6 +118,7 @@ class MiceImputer(object):
                         m = LinearRegression(n_jobs = -1)
                     elif method == 'Ridge':
                         m = Ridge()
+                        
                     m.fit(train_x, train_y)
                     model_score[i].append(m.score(val_x, val_y))
                     new_X.loc[null_rows,column] = pd.Series(m.predict(test_x))
@@ -133,6 +130,7 @@ class MiceImputer(object):
                         m = LogisticRegression(n_jobs = -1, solver = 'lbfgs')
                     elif method == 'Ridge':
                         m = RidgeClassifier()
+                        
                     m.fit(train_x, train_y)
                     model_score[i].append(m.score(val_x, val_y))
                     new_X.loc[null_rows,column] = pd.Series(m.predict(test_x))
